@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetChannelPoints", "GetChannelPoints\GetChannelPoints.csproj", "{21D8CAFC-BCAC-45EC-85BF-33B3E142F820}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21D8CAFC-BCAC-45EC-85BF-33B3E142F820}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D8CAFC-BCAC-45EC-85BF-33B3E142F820}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D8CAFC-BCAC-45EC-85BF-33B3E142F820}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D8CAFC-BCAC-45EC-85BF-33B3E142F820}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {26FB8F22-AF56-41CD-AEB4-9B61E94DFDF8}
+	EndGlobalSection
+	GlobalSection(VaultVsipSolution-v2) = preSolution
+		VaultHost = http://192.168.1.128/VaultService
+		VaultRepositoryID = 1
+		VaultRepositoryGUID = a558d7ae-fce4-46bd-97d2-c973ceeb7e7a
+		ProjectCount = 1
+		ProjectRelativeDiskPath1 = GetChannelPoints\GetChannelPoints.csproj
+	EndGlobalSection
+EndGlobal
