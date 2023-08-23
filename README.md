@@ -1,6 +1,6 @@
 # Twitch Get Channel Points
 
-The **Twitch Get Channel Points** is a console application written in C# that enables you to retrieve and export channel points data for followed Twitch channels. It uses the Twitch API to fetch user and channel information, perform OAuth authorization, and extract channel points information for the specified channels.
+The **Twitch Get Channel Points** is a console application written in C# that enables you to retrieve and export channel points data for followed Twitch channels. It uses the Twitch API to fetch user and channel information, perform OAuth authorization, and extract channel points information for the followed channels specified user.
 
 ## Getting Started
 
