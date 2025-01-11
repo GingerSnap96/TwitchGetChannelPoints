@@ -47,7 +47,7 @@ class Program
 
                 foreach (var followedChannel in followedChannels)
                 {
-                    var channelName = followedChannel.ToName;
+                    var channelName = followedChannel.broadcaster_name;
                     // Capture the console output using a StringWriter
                     using (var consoleOutput = new StringWriter())
                     {
@@ -197,7 +197,7 @@ class Program
             httpClient.DefaultRequestHeaders.Add("Client-ID", clientId);
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
 
-            var requestUrl = $"https://api.twitch.tv/helix/users/follows?from_id={userId}";
+            var requestUrl = $"https://api.twitch.tv/helix/channels/followed?user_id={userId}";
             if (!string.IsNullOrEmpty(cursor))
             {
                 requestUrl += $"&after={cursor}";
@@ -230,10 +230,10 @@ class Program
         {
             var channel = new FollowedChannel
             {
-                ToId = item["to_id"].ToString(),
-                ToLogin = item["to_login"].ToString(),
-                ToName = item["to_name"].ToString(),
-                FollowedAt = DateTime.Parse(item["followed_at"].ToString())
+                broadcaster_id = item["broadcaster_id"].ToString(),
+                broadcaster_login = item["broadcaster_login"].ToString(),
+                broadcaster_name = item["broadcaster_name"].ToString(),
+                followed_at = DateTime.Parse(item["followed_at"].ToString())
             };
             followedChannels.Add(channel);
         }
@@ -369,10 +369,10 @@ class Config
 class FollowedChannel
 {
     // Followed channel properties
-    public string ToId { get; set; }
-    public string ToLogin { get; set; }
-    public string ToName { get; set; }
-    public DateTime FollowedAt { get; set; }
+    public string broadcaster_id { get; set; }
+    public string broadcaster_login { get; set; }
+    public string broadcaster_name { get; set; }
+    public DateTime followed_at { get; set; }
 }
 
 class OAuthTokenResponse
