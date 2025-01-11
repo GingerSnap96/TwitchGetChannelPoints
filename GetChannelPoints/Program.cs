@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 class Program
 {
@@ -15,6 +16,8 @@ class Program
             Console.WriteLine("Failed to read configuration from JSON file.");
             return;
         }
+
+        string directory = AppContext.BaseDirectory;
 
         // Use config values
         var clientId = config.ClientId;
@@ -38,12 +41,18 @@ class Program
                 Console.WriteLine("Fetching followed channels for user: " + username);
                 var followedChannels = await GetAllFollowedChannelsAsync(userId, clientId);
                 var dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmmss"); // Get current date-time for file name
-                var csvFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", $"{username}_ChannelPoints_{dateTimeNow}.csv");
+                
+                var csvFilePath = Path.Combine(directory, $"{username}_ChannelPoints_{dateTimeNow}.csv");
 
                 var csvRows = new List<string>(); // To store CSV rows
+                var headerRow = "followed_channel,channel_points";
+                csvRows.Add(headerRow);
 
                 Console.WriteLine("Fetching channel points for " + followedChannels.Count.ToString() + " followed streams... Please wait.");
                 Console.WriteLine("Once finished the following file will be produced: " + csvFilePath);
+
+                // Save the original Console.Out (to restore it later)
+                var originalConsoleOut = Console.Out;
 
                 foreach (var followedChannel in followedChannels)
                 {
@@ -63,6 +72,8 @@ class Program
 
                 // Create and write the CSV file
                 File.WriteAllLines(csvFilePath, csvRows);
+                Console.SetOut(originalConsoleOut);
+                Console.WriteLine("Processing Complete.");
             }
         }
     }
@@ -70,7 +81,7 @@ class Program
     // Read configuration values from JSON file
     static Config ReadConfigFromJson()
     {
-        var configFilePath = "config.json";
+        var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
         try
         {
             var jsonConfig = File.ReadAllText(configFilePath);
