@@ -275,7 +275,7 @@ class Program
         };
 
         // Fetch channel points data using a custom function
-        var channelPointsData = await FetchData("https://gql.twitch.tv/gql", GetChannelPointsQuery(channelName), headers);
+        var channelPointsData = await FetchData("https://gql.twitch.tv/gql", GetChannelPointsQuery(channelName.Replace(" ","")), headers);
         if (channelPointsData != null)
         {
             var community = channelPointsData["data"]?["community"] as JObject;
