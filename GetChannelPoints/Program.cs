@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 class Program
 {
@@ -15,6 +16,8 @@ class Program
             Console.WriteLine("Failed to read configuration from JSON file.");
             return;
         }
+
+        string directory = AppContext.BaseDirectory;
 
         // Use config values
         var clientId = config.ClientId;
@@ -38,16 +41,22 @@ class Program
                 Console.WriteLine("Fetching followed channels for user: " + username);
                 var followedChannels = await GetAllFollowedChannelsAsync(userId, clientId);
                 var dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmmss"); // Get current date-time for file name
-                var csvFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", $"{username}_ChannelPoints_{dateTimeNow}.csv");
+                
+                var csvFilePath = Path.Combine(directory, $"{username}_ChannelPoints_{dateTimeNow}.csv");
 
                 var csvRows = new List<string>(); // To store CSV rows
+                var headerRow = "followed_channel,channel_points";
+                csvRows.Add(headerRow);
 
                 Console.WriteLine("Fetching channel points for " + followedChannels.Count.ToString() + " followed streams... Please wait.");
                 Console.WriteLine("Once finished the following file will be produced: " + csvFilePath);
 
+                // Save the original Console.Out (to restore it later)
+                var originalConsoleOut = Console.Out;
+
                 foreach (var followedChannel in followedChannels)
                 {
-                    var channelName = followedChannel.ToName;
+                    var channelName = followedChannel.broadcaster_name;
                     // Capture the console output using a StringWriter
                     using (var consoleOutput = new StringWriter())
                     {
@@ -63,6 +72,8 @@ class Program
 
                 // Create and write the CSV file
                 File.WriteAllLines(csvFilePath, csvRows);
+                Console.SetOut(originalConsoleOut);
+                Console.WriteLine("Processing Complete.");
             }
         }
     }
@@ -70,7 +81,7 @@ class Program
     // Read configuration values from JSON file
     static Config ReadConfigFromJson()
     {
-        var configFilePath = "config.json";
+        var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
         try
         {
             var jsonConfig = File.ReadAllText(configFilePath);
@@ -197,7 +208,7 @@ class Program
             httpClient.DefaultRequestHeaders.Add("Client-ID", clientId);
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
 
-            var requestUrl = $"https://api.twitch.tv/helix/users/follows?from_id={userId}";
+            var requestUrl = $"https://api.twitch.tv/helix/channels/followed?user_id={userId}";
             if (!string.IsNullOrEmpty(cursor))
             {
                 requestUrl += $"&after={cursor}";
@@ -230,10 +241,10 @@ class Program
         {
             var channel = new FollowedChannel
             {
-                ToId = item["to_id"].ToString(),
-                ToLogin = item["to_login"].ToString(),
-                ToName = item["to_name"].ToString(),
-                FollowedAt = DateTime.Parse(item["followed_at"].ToString())
+                broadcaster_id = item["broadcaster_id"].ToString(),
+                broadcaster_login = item["broadcaster_login"].ToString(),
+                broadcaster_name = item["broadcaster_name"].ToString(),
+                followed_at = DateTime.Parse(item["followed_at"].ToString())
             };
             followedChannels.Add(channel);
         }
@@ -264,7 +275,7 @@ class Program
         };
 
         // Fetch channel points data using a custom function
-        var channelPointsData = await FetchData("https://gql.twitch.tv/gql", GetChannelPointsQuery(channelName), headers);
+        var channelPointsData = await FetchData("https://gql.twitch.tv/gql", GetChannelPointsQuery(channelName.Replace(" ","")), headers);
         if (channelPointsData != null)
         {
             var community = channelPointsData["data"]?["community"] as JObject;
@@ -369,10 +380,10 @@ class Config
 class FollowedChannel
 {
     // Followed channel properties
-    public string ToId { get; set; }
-    public string ToLogin { get; set; }
-    public string ToName { get; set; }
-    public DateTime FollowedAt { get; set; }
+    public string broadcaster_id { get; set; }
+    public string broadcaster_login { get; set; }
+    public string broadcaster_name { get; set; }
+    public DateTime followed_at { get; set; }
 }
 
 class OAuthTokenResponse
